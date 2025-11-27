@@ -1,0 +1,221 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #567d8d;
+}
+
+/* ======== CABEÇALHO ======== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.menu a {
+    margin-left: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: #567d8d;
+}
+
+.menu img {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.logo img {
+    width: 40px;
+    margin-right: 10px;
+}
+
+/* ======== BANNER ======== */
+.banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #d6ebf5;
+    padding: 80px 60px;
+    border-radius: 25px;
+    margin: 20px;
+}
+
+.greeting-banner {
+    max-width: 60%;
+}
+
+.greeting-banner h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #567d8d;
+}
+
+.greeting-banner p {
+    font-size: 1rem;
+    margin-top: 10px;
+    color: #567d8d;
+}
+
+/* ======== LAYOUT DOS CARDS ======== */
+.cards-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* consultas + formulário */
+    gap: 20px;
+    margin: 30px auto;
+    max-width: 1458px;
+}
+
+.consultas-marcadas {
+    grid-column: 1;
+}
+
+.formAgendamento {
+    grid-column: 2;
+}
+
+.historico {
+    grid-column: 1 / span 2;
+}
+
+/* ======== CARDS ======== */
+.card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 20px;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.form-header h1,
+.form-header h2 {
+    font-size: 1.3rem;
+    color: #567d8d;
+    margin-bottom: 15px;
+    padding-left: 12px;
+    border-left: 5px solid #567d8d; /* Barra colorida */
+}
+
+/* ======== FORMULÁRIO ======== */
+.input-box {
+    margin-bottom: 0.8rem;
+}
+
+.input-box input,
+.input-box select {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease;
+}
+
+.input-box input:focus,
+.input-box select:focus {
+    outline: none;
+    border-color: #6e8efb;
+    box-shadow: 0 0 0 2px rgba(110, 142, 251, 0.2);
+}
+
+.continue-button button {
+    background:#567d8d;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.continue-button button:hover {
+    opacity: 0.9;
+}
+
+/* ======== TABELAS ======== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+thead {
+    background: #d6ebf5;
+    color: #567d8d;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* Status */
+td:nth-child(5) {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+/* Botões de ação */
+td:last-child button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-right: 5px;
+    transition: 0.3s;
+}
+
+.btn-editar {
+    background: #6e8efb;
+    color: #fff;
+}
+
+.btn-cancelar {
+    background: #e57373;
+    color: #fff;
+}
+
+td:last-child button:hover {
+    opacity: 0.8;
+}
+
+/* ======== RESPONSIVIDADE ======== */
+@media (max-width: 768px) {
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+
+    .historico {
+        grid-column: 1;
+    }
+}

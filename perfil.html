@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Editar Perfil</title>
+  <link rel="stylesheet" href="css/perfil.css" />
+</head>
+<body>
+  <!-- HEADER (igual ao da página de ajuda) -->
+  <header>
+    <div class="logo">
+      <img src="assets/img/estetoscópio-agendmed.png" alt="Logo AgendMed" />
+      <span>AgendMed</span>
+    </div>
+
+    <nav class="menu">
+      <a href="dashboard-adm.html"><img src="assets/img/house.png" alt=""> Início</a>
+      <a href="perfil.html"><img src="assets/img/user.png" alt=""> Perfil</a>
+      <a href="notificacao.html"><img src="assets/img/notification.png" alt=""> Notificação</a>
+      <a href="servicos.html"><img src="assets/img/folder (2).png" alt=""> Serviços</a>
+      <a href="sobre-nos.html"><img src="assets/img/about us.png" alt=""> Sobre nós</a>
+      <a href="ajuda.html"><img src="assets/img/help.png" alt=""> Ajuda</a>
+      <a href="sair.html"><img src="assets/img/exit.png" alt=""> Sair</a>
+    </nav>
+  </header>
+
+  <!-- CONTAINER (mesmo tamanho/espacamento da página de ajuda) -->
+  <main class="container">
+    <!-- Imagem lateral (mesma imagem da página "esqueceu a senha") -->
+    <div class="form-image">
+      <img src="assets/img/undraw_medicine_hqqg.svg" alt="Ilustração" />
+    </div>
+
+    <!-- Formulário -->
+    <form class="form" action="atualizar_perfil.php" method="post" enctype="multipart/form-data">
+      <div class="form-header">
+        <div class="title">
+          <h1>Editar Perfil</h1>
+        </div>
+        <p class="descricao">
+          Gerencie suas informações pessoais. As alterações serão salvas com segurança.
+        </p>
+      </div>
+
+      <!-- Foto de perfil -->
+      <div class="perfil-foto">
+        <img src="assets/img/avatar-placeholder.png" alt="Foto de Perfil" />
+        <label class="btn-upload">
+          Alterar Foto
+          <input type="file" name="avatar" accept="image/*" hidden />
+        </label>
+      </div>
+
+      <!-- Campos -->
+      <div class="input-group">
+        <div class="input-box">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" name="nome" value="Beatriz" />
+        </div>
+
+        <div class="input-box">
+          <label for="sobrenome">Sobrenome</label>
+          <input type="text" id="sobrenome" name="sobrenome" value="Dos Santos Camilo" />
+        </div>
+
+        <div class="input-box">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" placeholder="exemplo@email.com" />
+        </div>
+
+        <div class="input-box">
+          <label for="celular">Celular</label>
+          <input type="tel" id="celular" name="celular" placeholder="(99) 99999-9999" />
+        </div>
+
+        <div class="input-box">
+          <label for="tipo">Tipo de Usuário</label>
+          <select id="tipo" name="tipo">
+            <option value="adm">Administrador</option>
+            <option value="paciente">Paciente</option>
+            <option value="med">Médico</option>
+          </select>
+        </div>
+
+        <div class="input-box">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" name="senha" placeholder="********" />
+        </div>
+      </div>
+
+      <!-- Gênero -->
+      <div class="gender-inputs">
+        <div class="gender-title"><h6>Gênero</h6></div>
+        <div class="gender-group">
+          <label class="gender-input"><input type="radio" name="genero" value="feminino"> Feminino</label>
+          <label class="gender-input"><input type="radio" name="genero" value="masculino"> Masculino</label>
+          <label class="gender-input"><input type="radio" name="genero" value="outros"> Outros</label>
+        </div>
+      </div>
+
+      <!-- Botão -->
+      <div class="continue-button">
+        <button type="submit">Salvar Alterações</button>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

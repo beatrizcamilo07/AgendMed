@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+/* ===== RESET GLOBAL ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Quicksand', sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ===== BODY ===== */
+body {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8f4f8, #f5f5f5);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* ===== HEADER ===== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.menu a {
+  margin-left: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #567d8d;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.menu a:hover {
+  color: #2c4e5d;
+}
+
+.menu img {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2d3e50;
+}
+
+.logo img {
+  width: 40px;
+  margin-right: 10px;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  margin: 50px 40px 40px 40px; /* topo 50px | laterais 40px | baixo 40px */
+  display: flex;
+  width: calc(100% - 80px); /* respeita as margens laterais */
+  background: #fff;
+  border-radius: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* ===== FOTO LATERAL ===== */
+.form-image {
+  flex: 1;
+  background: linear-gradient(135deg, #cfe9f7, #d6ebf5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.form-image img {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== CONTEÚDO ===== */
+.form {
+  flex: 1.2;
+  padding: 3rem;
+}
+
+.form-header {
+  margin-bottom: 1.5rem;
+}
+
+.form-header .title h1 {
+  color: #2d3e50;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.content p {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 20px;
+  }
+
+  .menu {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .menu a {
+    margin: 8px 15px 0 0;
+  }
+
+  .container {
+    flex-direction: column;
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  .form-image {
+    display: none; /* igual à página de ajuda */
+  }
+
+  .form {
+    padding: 2rem;
+  }
+
+  .form-header .title h1,
+  .content p {
+    text-align: center;
+  }
+}

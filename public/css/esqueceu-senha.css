@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap'); 
+
+* {
+    margin: 0;           /* Remove margens padrão de todos os elementos */
+    padding: 0;          /* Remove padding padrão */
+    box-sizing: border-box; /* Faz com que width e height incluam padding e border */
+    font-family: 'Quicksand', sans-serif; /* Aplica a fonte Quicksand globalmente */
+}
+
+body {
+    width: 100%;         /* Ocupa 100% da largura da tela */
+    height: 100vh;       /* Ocupa 100% da altura da viewport */
+    background-color: #f5f5f5; /* Cor de fundo cinza claro */
+    display: flex;       /* Ativa flexbox para centralização do container */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;     /* Centraliza verticalmente */
+}
+
+.esqueceu-senha-container {
+    display: flex;          /* Exibe como flexbox, lado a lado */
+    width: 90%;             /* Largura 90% da tela */
+    max-width: 1200px;      /* Máximo de 1200px */
+    height: 550px;          /* Altura fixa de 550px */
+    background-color: white; /* Fundo branco */
+    border-radius: 0;       /* Sem borda arredondada */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    overflow: hidden;       /* Oculta conteúdo que ultrapassar os limites */
+}
+
+/* ========== IMAGEM (LADO ESQUERDO) ========== */
+.form-image {
+    display: flex;           /* Flexbox para centralizar imagem */
+    background: #d6ebf5; /* Gradiente de fundo */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;      /* Centraliza verticalmente */
+    padding: 2rem;           /* Espaçamento interno */
+    flex: 1;                  /* Ocupa metade do container */
+}
+
+.form-image img {
+    justify-content: center;
+    max-width: 80%;        /* A imagem não ultrapassa o container */
+    height: auto;          /* Mantém proporção */
+}
+
+/* ========== FORMULÁRIO (LADO DIREITO) ========== */
+.form {
+    flex: 1;                /* Ocupa metade do container */
+    padding: 3rem;          /* Espaçamento interno */
+    display: flex;          /* Flexbox para centralizar o conteúdo */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;     /* Centraliza verticalmente */
+}
+
+/* ========== ESTILOS DO FORMULÁRIO (centralizado) ========== */
+.title {
+    text-align: center;
+    color: #567d8d;        /* Cor do texto */
+    margin-bottom: 1rem;
+    margin: auto;
+}
+
+.text{
+    margin: 0.5rem 0 0.5rem 0; /* Espaço acima e abaixo do parágrafo */
+    font: 1rem;
+}
+.input-group {
+    width: 100%;           /* Ocupa toda a largura disponível */
+    max-width: 400px;       /* Limite máximo de 400px */
+    margin: 0 auto;         /* Centraliza horizontalmente */
+    display: flex;          /* Flexbox para organizar inputs */
+    flex-direction: column; /* Inputs um embaixo do outro */
+    align-items: center;    /* Centraliza inputs dentro do grupo */
+}
+
+.input-box {
+    width: 100%;             /* Largura maior que a área disponível (pode ajustar) */
+    margin-bottom: 0.5rem;  /* Espaço entre os inputs */
+}
+
+.input-box label,
+.input-box input {
+    width: 100%;            
+    display: block;      
+}
+
+
+.input-box input {
+    padding: 0.8rem;         /* Espaçamento interno do input */
+    border: 1px solid #ddd;  /* Borda cinza clara */
+    border-radius: 4px;      /* Bordas arredondadas */
+    font-size: 0.8rem;     
+}
+
+.input-box a{
+    color:#567d8d;
+    font-size: 0.9rem;
+}
+
+.continue-button {
+    text-align: center;       /* Centraliza o botão */
+    margin-top: 1rem;         /* Espaço acima do botão */
+}
+
+.continue-button button {
+    background:#567d8d; /* Gradiente do botão */
+    color: white;             /* Cor do texto */
+    border: none;             /* Sem borda */
+    padding: 0.8rem 2rem;     /* Espaçamento interno */
+    border-radius: 50px;       /* Bordas arredondadas */
+    cursor: pointer;          /* Muda o cursor ao passar em cima */
+    /* Diminuir fonte do botão, se quiser: */
+    font-size: 0.9rem;        /* Exemplo de fonte menor */
+}
+/* ========== DESIGN RESPONSIVO ========== */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Empilha verticalmente */
+        width: 95%;     /* Largura maior em telas pequenas */
+    }
+   
+    .form-image {
+        display: none;  /* Oculta a imagem em mobile */
+    }
+   
+    .form {
+        padding: 2rem;  /* Reduz padding em mobile */
+    }
+   
+    .input-box {
+        flex: 1 1 100%; /* Full width em mobile */
+    }
+}

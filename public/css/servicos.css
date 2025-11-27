@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+/* ===== Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Quicksand', sans-serif;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8f4f8, #f5f5f5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== MENU HEADER ===== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.menu a {
+  margin-left: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #567d8d;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.menu a:hover {
+  color: #2c4e5d;
+}
+
+.menu img {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #567d8d;
+}
+
+.logo img {
+  width: 40px;
+  margin-right: 10px;
+}
+
+/* ===== CONTEÚDO ===== */
+.conteudo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 40px 20px;
+}
+
+.servicos-box {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  padding: 3rem;
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+}
+
+.servicos-box h1 {
+  font-size: 2rem;
+  color: #2d3e50;
+  margin-bottom: 15px;
+}
+
+.servicos-box .descricao {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* ===== GRID ===== */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.2rem;
+}
+
+.service-card {
+  background: #f9fafb;
+  border: 1px solid #e0e6eb;
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: #2d3e50;
+  transition: all 0.3s ease;
+}
+
+.service-card span {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+}
+
+.service-card:hover {
+  background: #e6f2f8;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Responsivo ===== */
+@media (max-width: 768px) {
+  .menu a {
+    margin-left: 10px;
+    font-size: 0.9rem;
+  }
+
+  .servicos-box {
+    padding: 2rem;
+  }
+
+  .servicos-box h1 {
+    font-size: 1.6rem;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

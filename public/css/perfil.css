@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+/* ===== Reset ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
+html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+
+/* ===== BODY ===== */
+body {
+  background: linear-gradient(135deg, #e8f4f8, #f5f5f5);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo { display: flex; align-items: center; font-size: 1.8rem; font-weight: 700; color: #2d3e50; }
+.logo img { width: 40px; margin-right: 10px; }
+
+.menu a {
+  margin-left: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #567d8d;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+.menu a:hover { color: #2d3e50; }
+.menu img { width: 20px; height: 20px; margin-right: 6px; }
+
+/* ===== CONTAINER (mesmos valores da página de ajuda) ===== */
+.container {
+  margin: 40px;
+  display: flex;
+  width: calc(100% - 80px);
+  background: #fff;
+  border-radius: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  align-items: stretch;
+}
+
+/* IMAGEM LATERAL */
+.form-image {
+  flex: 1;
+  background: linear-gradient(135deg, #cfe9f7, #d6ebf5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+.form-image img { max-width: 85%; height: auto; }
+
+/* FORM (lado direito) */
+.form {
+  flex: 1.2;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.form-header .title h1 {
+  color: #2d3e50;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+p.descricao {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+/* FOTO DE PERFIL */
+.perfil-foto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+.perfil-foto img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid #cfe9f7;
+  object-fit: cover;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+/* BOTÃO UPLOAD */
+.btn-upload {
+  padding: 0.6rem 1.2rem;
+  background: #567d8d;
+  color: #fff;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-upload:hover { background: #6aa7c7; }
+
+/* INPUTS */
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: flex-start;
+  margin-bottom: 1.5rem;
+}
+.input-box {
+  width: calc(50% - 0.8rem);
+  min-width: 220px;
+}
+.input-box label { display: block; font-size: 0.85rem; color: #567d8d; margin-bottom: 0.3rem; }
+.input-box input, .input-box select {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+  font-size: 0.85rem;
+}
+.input-box input:focus, .input-box select:focus { border-color: #6aa7c7; outline: none; background: #fff; }
+
+/* GÊNERO */
+.gender-inputs {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+.gender-title h6 { font-size: 0.9rem; margin-bottom: 0.6rem; color: #2d3e50; }
+.gender-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+/* BOTÃO SALVAR */
+.continue-button { text-align: left; margin-top: 0.5rem; }
+.continue-button button {
+  padding: 0.9rem 2rem;
+  background: #567d8d;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.continue-button button:hover { background: #6aa7c7; box-shadow: 0 6px 18px rgba(86,125,141,0.4); }
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 900px) {
+  .input-box { width: 100%; }
+}
+
+@media (max-width: 768px) {
+  header { flex-direction: column; align-items: flex-start; padding: 15px 20px; }
+  .menu { display:flex; flex-wrap:wrap; margin-top:10px; }
+  .menu a { margin: 8px 15px 0 0; }
+
+  .container {
+    flex-direction: column;
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  .form-image { display: none; }
+  .form { padding: 2rem; }
+  .form-header .title h1, p.descricao { text-align: center; }
+}
