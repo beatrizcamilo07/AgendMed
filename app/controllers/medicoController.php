@@ -1,90 +1,80 @@
 <?php
-session_start();
+require_once __DIR__ . '/../models/Medico.php';
+require_once __DIR__ . '/../models/Consulta.php';
 
-require_once "../config/conexao.php";
-require_once "../models/medico.php";
-require_once "../models/consulta.php";
-require_once "../models/horarios.php";
-
-class MedicoController
-{
+class MedicoController {
     private $db;
     private $medicoModel;
     private $consultaModel;
-    private $horariosModel;
 
-    public function __construct()
-    {
-        $database = new Database();
-        $this->db = $database->getConnection();
-
-        $this->medicoModel = new Medico($this->db);
-        $this->consultaModel = new Consulta($this->db);
-        $this->horariosModel = new Horarios($this->db);
+    public function __construct($db) {
+        $this->db = $db;
+        $this->medicoModel   = new MedicoModel($this->db);
+        $this->consultaModel = new ConsultaModel($this->db);
+        if (session_status() === PHP_SESSION_NONE) session_start();
     }
 
-    public function handle()
-    {
-        $action = $_GET['action'] ?? 'index';
-
-        switch ($action) {
-
-            case 'index':
-                $this->index();
-                break;
-
-            case 'consultasHoje':
-                echo json_encode(
-                    $this->consultaModel->listarConsultasHoje($_SESSION['usuario_id'])
-                );
-                break;
-
-            case 'consultasFuturas':
-                echo json_encode(
-                    $this->consultaModel->listarConsultasFuturas($_SESSION['usuario_id'])
-                );
-                break;
-
-            case 'listarHorarios':
-                echo json_encode(
-                    $this->horariosModel->listarHorariosMedico($_SESSION['usuario_id'])
-                );
-                break;
-
-            case 'adicionarHorario':
-                $dia = $_POST['dia_semana'];
-                $inicio = $_POST['hora_inicio'];
-                $fim = $_POST['hora_fim'];
-
-                $ok = $this->horariosModel->adicionarHorario(
-                    $_SESSION['usuario_id'],
-                    $dia,
-                    $inicio,
-                    $fim
-                );
-
-                echo json_encode([
-                    "sucesso" => $ok,
-                    "mensagem" => $ok ? "Horário adicionado!" : "Erro ao adicionar horário"
-                ]);
-                break;
-
-            default:
-                echo json_encode(["erro" => true, "mensagem" => "Ação inválida"]);
+    // Dashboard do médico
+    public function dashboardMedico() {
+        if (!isset($_SESSION['user_id'], $_SESSION['user_tipo']) || $_SESSION['user_tipo'] !== 'medico') {
+            header("Location: index.php?url=login/index");
+            exit();
         }
+
+        $idUser = $_SESSION['user_id'];
+        $dadosMedico = $this->medicoModel->getDadosMedicoCompleto($idUser);
+        if (!$dadosMedico) {
+            header("Location: index.php?url=login/index");
+            exit();
+        }
+
+        $id_med = $dadosMedico['id_med'];
+
+        // Buscar consultas do médico
+        $consultasHoje    = $this->consultaModel->getConsultasPorMedico($id_med, 'hoje');
+        $consultasFuturas = $this->consultaModel->getConsultasPorMedico($id_med, 'futuras');
+
+        require __DIR__ . '/../views/medico/dashboard-med.php';
     }
 
-    private function index()
-    {
-        if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'medico') {
-            header("Location: /agendmed/public/index.php");
-            exit;
+    // Atualizar status de atendimento
+    public function atualizarAtendimento() {
+        if (!isset($_GET['id'], $_GET['acao']) || $_SESSION['user_tipo'] !== 'medico') {
+            header("Location: index.php?url=login/index");
+            exit();
         }
 
-        $nome_medico = $_SESSION['usuario_nome'];
-        require __DIR__ . "/../views/medico/dashboard-medico.php";
+        $idConsulta = (int) $_GET['id'];
+        $acao = $_GET['acao'];
+
+        $status = null;
+        if ($acao === 'realizado') {
+            $status = ConsultaModel::STATUS_ATENDIMENTO_REALIZADO;
+        } elseif ($acao === 'nao_realizado') {
+            $status = ConsultaModel::STATUS_ATENDIMENTO_NAO_REALIZADO;
+        } else {
+            header("Location: index.php?url=login/index");
+            exit();
+        }
+
+        $resultado = $this->consultaModel->atualizarStatusAtendimento($idConsulta, $status);
+
+        $_SESSION['mensagem_sucesso'] = $resultado ? "Atualizado com sucesso." : "Erro ao atualizar status";
+        header("Location: index.php?url=medico/dashboardMedico");
+        exit;
+    }
+
+    // Logout do médico
+    public function logout() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $_SESSION = [];
+        session_destroy();
+
+        header("Location: index.php?url=login/index");
+        exit();
     }
 }
-
-$controller = new MedicoController();
-$controller->handle();
+?>

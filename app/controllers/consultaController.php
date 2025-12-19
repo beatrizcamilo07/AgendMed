@@ -1,45 +1,34 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../models/Consulta.php';
 
-require_once "../config/conexao.php";
-require_once "../models/consulta.php";
+class ConsultaController
+{
+    private PDO $db;
+    private ConsultaModel $consultaModel;
 
-$database = new Database();
-$db = $database->getConnection();
+    public function __construct()
+    {
+        $this->db = Database::conectar(); // Ajuste conforme seu Database.php
+        $this->consultaModel = new ConsultaModel($this->db);
+    }
 
-$model = new Consulta($db);
+    // Retorna os horários disponíveis de um médico (JSON)
+    public function horariosPorMedico()
+    {
+        $idMedico = $_GET['id_medico'] ?? null;
+        if (!$idMedico) {
+            echo json_encode([]);
+            return;
+        }
 
-$action = $_GET['action'] ?? '';
-
-if (!isset($_SESSION['id_usuario'])) {
-    echo json_encode(["erro" => true, "mensagem" => "Não autenticado"]);
-    exit;
+        $horarios = $this->consultaModel->getHorariosDisponiveisPorMedico((int)$idMedico);
+        echo json_encode($horarios);
+    }
 }
 
-$idPaciente = $_SESSION['id_usuario'];
-
-switch ($action) {
-
-    case 'agendar':
-        $idMedico = $_POST['id_medico'] ?? null;
-        $data     = $_POST['data'] ?? null;
-        $hora     = $_POST['hora'] ?? null;
-
-        $ok = $model->agendar($idPaciente, $idMedico, $data, $hora);
-
-        echo json_encode([
-            "mensagem" => $ok ? "Consulta agendada!" : "Erro ao agendar consulta."
-        ]);
-        break;
-
-    case 'listar':
-        echo json_encode($model->listar($idPaciente));
-        break;
-
-    case 'historico':
-        echo json_encode($model->historico($idPaciente));
-        break;
-
-    default:
-        echo json_encode(["erro" => true, "mensagem" => "Ação inválida"]);
+// Roteamento simples
+if (isset($_GET['url']) && $_GET['url'] === 'consulta/horariosPorMedico') {
+    $controller = new ConsultaController();
+    $controller->horariosPorMedico();
 }

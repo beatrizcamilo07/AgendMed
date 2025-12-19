@@ -1,46 +1,83 @@
 <?php
-require_once __DIR__ . '/../models/login.php';
-require_once __DIR__ . '/../../config/conexao.php';
 
-class LoginController {
+class LoginController
+{
+    private UsuarioModel $usuarioModel;
 
-    public function autenticar() {
+    public function __construct(PDO $db)
+    {
+        $this->usuarioModel = new UsuarioModel($db);
+    }
 
-        session_start();
+    public function index(): void
+    {
+        $erro = $_GET['erro'] ?? null;
+        include __DIR__ . '/../views/login/login.php';
+    }
 
-        $database = new Database();
-        $db = $database->getConnection();
+    public function autenticar(): void
+    {
+        session_start(); // <<< OBRIGATÓRIO
 
-        $login = new Login($db);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?url=login/index');
+            exit;
+        }
 
-        $email = $_POST['email'];
-        $senha = $_POST['senha'];
+        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $senha = filter_input(INPUT_POST, 'senha');
 
-        $usuario = $login->verificarLogin($email);
+        if (!$email || !$senha) {
+            header('Location: index.php?url=login/index&erro=Dados inválidos');
+            exit;
+        }
 
-        if ($usuario && password_verify($senha, $usuario['senha'])) {
+        $loginOk = $this->usuarioModel->login($email, $senha);
 
-            $_SESSION['usuario_id'] = $usuario['id'];
-            $_SESSION['usuario_nome'] = $usuario['nome'];
-            $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
+        if ($loginOk) {
 
-            switch ($usuario['tipo_usuario']) {
+            // agora essa verificação faz sentido
+            if (!isset($_SESSION['user_id'], $_SESSION['user_tipo'])) {
+                session_destroy();
+                header('Location: index.php?url=login/index&erro=Erro de sessão');
+                exit;
+            }
+
+            switch ($_SESSION['user_tipo']) {
                 case 'paciente':
-                    header('Location: ../app/views/dashboard/paciente.php');
+                    header('Location: index.php?url=paciente/dashboard-paciente');
                     break;
 
                 case 'medico':
-                    header('Location: ../app/views/dashboard/medico.php');
+                    header('Location: index.php?url=medico/dashboard-med');
                     break;
 
-                case 'admin':
-                    header('Location: ../app/views/dashboard/admin.php');
+                case 'administrador':
+                    header('Location: index.php?url=administrador/dashboard-adm');
+                    break;
+
+                default:
+                    session_destroy();
+                    header('Location: index.php?url=login/index&erro=Tipo de usuário inválido');
                     break;
             }
+
             exit;
-            
-        } else {
-            echo "Login incorreto.";
         }
+
+        header(
+            'Location: index.php?url=login/index&erro=' .
+            urlencode('E-mail ou senha incorretos')
+        );
+        exit;
+    }
+
+    public function logout(): void
+    {
+        session_start();
+        session_destroy();
+        header('Location: index.php?url=login/index');
+        exit;
     }
 }
+?>

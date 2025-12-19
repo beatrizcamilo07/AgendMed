@@ -85,11 +85,6 @@ header {
     max-width: 1480px;
 }
 
-.servicos-container {
-    margin: 30px auto;
-    max-width: 1480px;
-}
-
 /* ======== CARDS ======== */
 .card {
     background: #fff;
@@ -269,16 +264,24 @@ td:nth-last-child(2) {
 }
 
 /* ======== BOTÕES DE AÇÃO ======== */
+td .action-buttons {
+    display: flex;
+    gap: 0.5rem; /* espaçamento entre Realizado e Não Realizado */
+}
+
+td .action-buttons form {
+    margin: 0;
+}
+
 button.edit, 
 button.delete {
-    padding: 6px 14px;
+    padding: 5px 12px;  /* menor e compacto */
     border: none;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
-    margin: 2px;
 }
 
 button.edit {
@@ -291,7 +294,7 @@ button.edit:hover {
 }
 
 button.delete {
-    background: #d9534f;
+    background-color: #d9534f;
     color: #fff;
 }
 

@@ -1,92 +1,48 @@
-document.addEventListener("DOMContentLoaded", () => {
-    carregarMedicos();
-    carregarAgendamentos();
-    carregarHistorico();
+const medicoEl = document.getElementById('id_medico');
+const dataEl   = document.getElementById('data');
+const horaEl   = document.getElementById('hora');
 
-    const form = document.getElementById("form-agendamento");
-    form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        agendarConsulta();
+async function buscarHorarios() {
+    if (!medicoEl.value || !dataEl.value) return;
+
+    const resp = await fetch(
+        `index.php?url=paciente/horariosDisponiveis&id_med=${medicoEl.value}&data=${dataEl.value}`
+    );
+    const horarios = await resp.json();
+
+    horaEl.innerHTML = '<option value="">Selecione</option>';
+
+    horarios.forEach(h => {
+        const opt = document.createElement('option');
+        opt.value = h.id_horario;
+        opt.textContent = h.hora;
+        horaEl.appendChild(opt);
     });
+}
+
+medicoEl.addEventListener('change', buscarHorarios);
+dataEl.addEventListener('change', buscarHorarios);
+
+document.getElementById('form-agendamento').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    if (!horaEl.value) {
+        alert('Selecione um horário');
+        return;
+    }
+
+    const resp = await fetch('index.php?url=paciente/agendar', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id_horario: horaEl.value })
+    });
+
+    const res = await resp.json();
+
+    if (res.sucesso) {
+        alert('Consulta agendada!');
+        location.reload();
+    } else {
+        alert(res.erro);
+    }
 });
-
-// Carregar médicos no select
-function carregarMedicos() {
-    fetch("../../controllers/medicoController.php?action=listar")
-        .then(res => res.json())
-        .then(data => {
-            const select = document.getElementById("especialidade");
-            select.innerHTML = '<option value="">Selecione...</option>';
-
-            data.forEach(medico => {
-                const opt = document.createElement("option");
-                opt.value = medico.id;
-                opt.textContent = `${medico.especialidade} - Dr(a). ${medico.nome}`;
-                select.appendChild(opt);
-            });
-        })
-        .catch(() => {
-            alert("Erro ao carregar médicos.");
-        });
-}
-
-// Agendar consulta
-function agendarConsulta() {
-    const formData = new FormData(document.getElementById("form-agendamento"));
-
-    fetch("../../controllers/consultaController.php?action=agendar", {
-        method: "POST",
-        body: formData
-    })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.mensagem);
-            carregarAgendamentos();
-            carregarHistorico();
-        })
-        .catch(() => alert("Erro ao agendar consulta."));
-}
-
-// Listar consultas marcadas
-function carregarAgendamentos() {
-    fetch("../../controllers/consultaController.php?action=listar")
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.querySelector("#tabelaAgendamentos tbody");
-            tbody.innerHTML = "";
-
-            data.forEach(consulta => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${consulta.medico}</td>
-                    <td>${consulta.data}</td>
-                    <td>${consulta.hora}</td>
-                    <td>${consulta.especialidade}</td>
-                    <td>${consulta.status}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        });
-}
-
-// Histórico (consultas já realizadas/canceladas)
-function carregarHistorico() {
-    fetch("../../controllers/consultaController.php?action=historico")
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.querySelector("#tabelaHistorico tbody");
-            tbody.innerHTML = "";
-
-            data.forEach(consulta => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${consulta.medico}</td>
-                    <td>${consulta.data}</td>
-                    <td>${consulta.hora}</td>
-                    <td>${consulta.especialidade}</td>
-                    <td>${consulta.status}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        });
-}

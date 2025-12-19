@@ -1,22 +1,9 @@
-<?php
-// PARTE 1: CÓDIGO DE SEGURANÇA E DADOS DO ADMINISTRADOR
-session_start();
-
-// Verifica se o usuário está logado e se é um ADMINISTRADOR
-if (!isset($_SESSION['loggedin']) || $_SESSION['tipo_usuario'] !== 'adm') {
-    header('Location: index.html');
-    exit;
-}
-
-// Pega o nome do admin da sessão para usar na página
-$nome_admin = htmlspecialchars($_SESSION['nome']);
-?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/dashboard-adm.css">
+  <link rel="stylesheet" href="public/css/dashboard-adm.css">
   <title>Dashboard Administrador - AgendMed</title>
 </head>
 
@@ -30,7 +17,7 @@ $nome_admin = htmlspecialchars($_SESSION['nome']);
       </div>
       <nav class="menu">
         <a href="dashboard-adm.php"><img src="assets/img/house.png" alt="House"> Início</a>
-        <a href="perfil.html"><img src="assets/img/user.png" alt="User"> Perfil</a>
+        <a href="perfil.html"><img src="assets/img/u  AR53ZCXZ\.png" alt="User"> Perfil</a>
         <a href="notificacao.html"><img src="assets/img/notification.png" alt="notification"> Notificação</a>
         <a href="servicos.html"><img src="assets/img/folder (2).png" alt="Folder"> Serviços</a>
         <a href="sobre-nos.html"><img src="assets/img/about us.png" alt="Sobre nós"> Sobre nós</a>
@@ -62,7 +49,7 @@ $nome_admin = htmlspecialchars($_SESSION['nome']);
                 <th>Paciente</th>
                 <th>Data</th>
                 <th>Hora</th>
-                <th>Especialidade (Médico)</th>
+                <th>Especialidade</th>
                 <th>Status</th>
                 <th>Ações</th>
               </tr>
@@ -88,7 +75,7 @@ $nome_admin = htmlspecialchars($_SESSION['nome']);
                 </select>
               </div>
               <div class="input-box">
-                <label for="especialidade">Especialidade e Médico</label>
+                <label for="especialidade">Especialidade</label>
                 <select id="especialidade" name="id_medico" required>
                   <option value="">Carregando...</option>
                 </select>
@@ -104,8 +91,7 @@ $nome_admin = htmlspecialchars($_SESSION['nome']);
               <div class="input-box" id="status-box" style="display: none;">
                 <label for="status">Status</label>
                 <select id="status" name="status">
-                  <option value="confirmado">Confirmado</option>
-                  <option value="concluido">Concluído</option>
+                  <option value="confirmado">Agendado</option>
                   <option value="cancelado">Cancelado</option>
                 </select>
               </div>

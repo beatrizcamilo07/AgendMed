@@ -1,262 +1,268 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
-/* ========== RESET E ESTILOS GLOBAIS ========== */
-/* Reset básico para todos os elementos */
+
+/* RESET GLOBAL */
 * {
-    margin: 0;          /* Remove margens padrão */
-    padding: 0;         /* Remove paddings padrão */
-    box-sizing: border-box; /* Faz padding e border serem incluídos na largura/altura */
-    font-family: 'Quicksand'; /* Fonte padrão */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
 }
 
-/* Estilos para o corpo da página */
+/* BODY - Ajustado para permitir scroll se o form crescer */
 body {
-    width: 100%;        /* Ocupa 100% da largura */
-    height: 100vh;      /* Altura igual à viewport */
-    background-color: #f5f5f5; /* Cor de fundo cinza claro */
-    display: flex;      /* Ativa flexbox */
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
+    width: 100%;
+    min-height: 100vh; /* Ocupa no mínimo a tela toda */
+    height: auto;      /* Cresce se necessário */
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;   /* Espaço em cima e embaixo para não colar nas bordas */
 }
 
-/* ========== CONTAINER PRINCIPAL ========== */
+/* CONTAINER PRINCIPAL - Onde a mágica acontece */
 .container {
-    display: flex;      /* Layout flexível */
-    width: 100%;         /* Largura de 90% do pai */
-    width: 1200px;  /* Largura máxima */
-    background-color: white; /* Fundo branco */
-    border-radius: 0; /* Bordas arredondadas */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    overflow: hidden;   /* Esconde conteúdo que ultrapassar */
+    display: flex;
+    width: 90%;
+    height: auto;         /* IMPORTANTE: Permite crescer quando clica em Médico */
+    min-height: 550px;    /* Tamanho inicial bonito */
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;     /* Garante bordas arredondadas */
 }
 
-/* ========== SEÇÃO DA IMAGEM ========== */
+/* IMAGEM (Lado Esquerdo) */
 .form-image {
-    display: flex;      /* Flexbox para centralizar imagem */
-    background:  #d6ebf5; 
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
-    padding: 2rem;      /* Espaçamento interno */
-    flex: 1;            /* Ocupa espaço disponível */
+    display: flex;
+    background: #d6ebf5;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    flex: 1;
+    /* A imagem vai esticar junto com o formulário */
 }
 
 .form-image img {
-    max-width: 100%;    /* Imagem responsiva */
-    height: auto;       /* Mantém proporção */
+    max-width: 100%;
+    height: auto;
 }
 
-/* ========== SEÇÃO DO FORMULÁRIO ========== */
+/* FORMULÁRIO (Lado Direito) */
 .form {
-    flex: 1;            /* Ocupa espaço disponível */
-    padding: 3rem;      /* Espaçamento interno */
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-/* Cabeçalho do formulário */
 .form-header {
-    display: flex;      /* Flexbox para alinhar título e botão */
-    justify-content: space-between; /* Espaço entre os itens */
-    align-items: center; /* Alinha verticalmente */
-    margin-bottom: 2rem; /* Espaço abaixo */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
 }
 
-/* Título do formulário */
 .form-header .title h1 {
-    color: #567d8d;        /* Cor do texto */
-    font-size: 2rem;    /* Tamanho da fonte */
-    font-weight: 600;   /* Peso da fonte */
+    color: #567d8d;
+    font-size: 2rem;
+    font-weight: 600;
 }
 
-/* Botão de login */
+/* BOTÃO DE ENTRAR */
 .login-button button {
-    background-color: transparent; /* Fundo transparente */
-    border: 1px solid #567d8d;     /* Borda azul */
-    color: #567d8d;                /* Texto azul */
-    padding: 0.5rem 1rem;          /* Espaçamento interno */
-    border-radius: 30px;            /* Bordas arredondadas */
-    font-weight: 500;              /* Peso da fonte */
-    cursor: pointer;               /* Cursor de ponteiro */
-    transition: all 0.3s ease;     /* Transição suave */
+    background-color: transparent;
+    border: 1px solid #567d8d;
+    color: #567d8d;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s ease;
 }
 
-/* Efeito hover do botão */
 .login-button button:hover {
-    background-color:#567d8d; /* Fundo azul */
-    color: white;             /* Texto branco */
+    background-color: #567d8d;
+    color: white;
 }
 
-/* Link dentro do botão */
 .login-button button a {
-    text-decoration: none; /* Remove sublinhado */
-    color: inherit;        /* Herda cor do pai */
+    text-decoration: none;
+    color: inherit;
 }
 
-/* ========== GRUPOS DE INPUT ========== */
+/* INPUTS GERAIS */
 .input-group {
-    display: flex;      /* Flexbox para layout */
-    flex-wrap: wrap;    /* Permite quebra de linha */
-    justify-content: space-between; /* Espaço entre itens */
-    gap: 0.8rem;        /* Espaço entre elementos */
-    margin-bottom: 0.5rem; /* Espaço abaixo */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
 }
 
-/* Caixa de input individual */
 .input-box {
-    flex: 1 1 45%;      /* Cresce, encolhe, base 45% */
-    min-width: 150px;   /* Largura mínima */
-    margin-bottom: 0.5rem; /* Espaço abaixo */
+    flex: 1 1 45%;
+    min-width: 150px;
+    margin-bottom: 0.5rem;
 }
 
-/* Label dos inputs */
 .input-box label {
-    display: block;     /* Faz ocupar linha inteira */
-    margin-bottom: 0.2rem; /* Espaço abaixo */
-    color: #555;        /* Cor do texto */
-    font-size: 0.8rem;    /* Tamanho da fonte */
-    font-weight: 600;   /* Peso da fonte */
+    display: block;
+    margin-bottom: 0.2rem;
+    color: #555;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
-/* Estilos para inputs e selects */
 .input-box input,
 .input-box select {
-    width: 100%;        /* Largura total */
-    padding: 0.8rem;    /* Espaçamento interno */
-    border: 1px solid #ddd; /* Borda cinza */
-    border-radius: 5px; /* Bordas arredondadas */
-    font-size: 0.8rem;    /* Tamanho da fonte */
-    transition: border-color 0.3s ease; /* Transição suave */
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    transition: border-color 0.3s ease;
 }
 
-/* Efeito focus */
 .input-box input:focus,
 .input-box select:focus {
-    outline: none;      /* Remove contorno padrão */
-    border-color: #f5f5f5; /* Borda azul */
-    box-shadow: 0 0 0 2px rgba(48, 94, 89, 0.527); /* Sombra azul */
+    outline: none;
+    border-color: #f5f5f5;
+    box-shadow: 0 0 0 2px rgba(48, 94, 89, 0.527);
 }
 
-/* Placeholder */
 .input-box input::placeholder {
-    color: #aaa;        /* Cor cinza claro */
-}
-
-/* Aplica fonte e cor no select */
-#tipo_usuario {
-    font-family: 'Quicksand';
     color: #aaa;
 }
 
-/* Deixa a opção "Selecione" cinza */
+/* SELECT ESPECIAL */
+#tipo_usuario {
+    color: #333;
+}
+
 #tipo_usuario option[value=""] {
     color: #aaa;
 }
 
-/* ========== INPUTS DE GÊNERO ========== */
-.gender-inputs {
-    margin-bottom: 2rem; /* Espaço abaixo */
-}
-
-/* Título da seção de gênero */
-.gender-title h6 {
-    color: #555;        /* Cor do texto */
-    font-size: 0.8rem;    /* Tamanho da fonte */
-    margin-bottom: 0.8rem; /* Espaço abaixo */
-    font-weight: 600;   /* Peso da fonte */
-}
-
-/* Grupo de opções de gênero */
-.gender-group {
-    display: flex;      /* Flexbox para layout */
-    flex-wrap: wrap;    /* Permite quebra de linha */
-    font-size: 0.8rem;    /* Tamanho da fonte */
-    gap: 3.6rem;          /* Espaço entre itens */
-}
-
-/* Input individual de gênero */
-.gender-input {
-    display: flex;      /* Flexbox para alinhar */
-    align-items: center; /* Centraliza verticalmente */
-}
-
-/* Radio button */
-.gender-input input {
-    margin-right: 0.5rem; /* Espaço à direita */
-}
-
-/* Label do radio button */
-.gender-input label {
-    color: #555;        /* Cor do texto */
-    font-weight: 600;   /* Peso da fonte */
-}
-
-/* ========== BOTÃO DE CONTINUAR ========== */
-.continue-button {
-    text-align: center; /* Centraliza o botão */
-}
-
-/* Estilo do botão principal */
-.continue-button button {
-    background: #567d8d; /* Gradiente azul/roxo */
-    color: white;       /* Texto branco */
-    border: none;       /* Remove borda */
-    padding: 1rem 2rem; /* Espaçamento interno */
-    border-radius: 50px; /* Bordas arredondadas */
-    font-size: 1rem;    /* Tamanho da fonte */
-    font-weight: 600;   /* Peso da fonte */
-    cursor: pointer;    /* Cursor de ponteiro */
-    width: 100%;        /* Largura total */
-    max-width: 300px;   /* Largura máxima */
-    transition: all 0.3s ease; /* Transição suave */
-    
-}
-
-/* Efeito hover do botão */
-.continue-button button:hover {
-    transform: translateY(-2px); /* Move para cima */
-    box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4); /* Sombra azul */
-}
-
-/* ========== CAMPOS OCULTOS ========== */
-.hidden {
-    display: none;      /* Oculta elementos */
-    width: 100%;        /* Largura total quando visível */
-    animation: fadeIn 0.3s ease; /* Animação de aparecer */
-}
-
-/* Animação de fade in */
-@keyframes fadeIn {
-    from { opacity: 0; } /* Inicia transparente */
-    to { opacity: 1; }   /* Termina visível */
-}
-
-/* Campos específicos para médicos */
+/* --- CAMPOS MÉDICO (Solução do Alinhamento) --- */
 #campos-medico {
-    width: 100%;        /* Largura total */
-    margin-bottom: 0.5rem; /* Espaço abaixo */
-    animation: fadeIn 0.3s ease; /* Animação de aparecer */
+    width: 100%;
+    display: none; /* Padrão invisível */
+    
+    /* Quando visível, isso ajuda a organizar */
+    flex-wrap: wrap; 
+    justify-content: space-between;
+    gap: 0.8rem; /* Espaço entre CRM e Especialidade */
+    
+    margin-bottom: 0.5rem;
+    animation: fadeIn 0.5s ease;
 }
 
-/* Caixas de input dentro dos campos de médico */
+/* Força os inputs de médico a ficarem lado a lado (48% cada) */
 #campos-medico .input-box {
-    flex: 1 1 45%;      /* Layout em grid */
-    min-width: 200px;   /* Largura mínima */
-    margin-bottom: 0.5rem; /* Espaço abaixo */
+    display: inline-block; /* Garante comportamento lado a lado */
+    width: 48%;            /* Tamanho quase metade */
+    min-width: 150px;
+    vertical-align: top;
+    margin-right: 1%;      /* Pequeno espaçamento se o gap falhar */
 }
 
-/* ========== DESIGN RESPONSIVO ========== */
+/* GÊNERO */
+.gender-inputs {
+    margin-bottom: 2rem;
+    margin-top: 1rem; /* Espaço extra para não colar nos inputs de cima */
+}
+
+.gender-title h6 {
+    color: #555;
+    font-size: 0.8rem;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.gender-group {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    gap: 3.6rem;
+}
+
+.gender-input {
+    display: flex;
+    align-items: center;
+}
+
+.gender-input input {
+    margin-right: 0.5rem;
+}
+
+.gender-input label {
+    color: #555;
+    font-weight: 600;
+}
+
+/* BOTÃO CADASTRAR */
+.continue-button {
+    text-align: center;
+    width: 100%;
+}
+
+.continue-button button {
+    background: #567d8d;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+    transition: 0.3s ease;
+}
+
+.continue-button button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4);
+}
+
+/* ANIMAÇÃO */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVO */
 @media (max-width: 768px) {
     .container {
-        flex-direction: column; /* Empilha verticalmente */
-        width: 95%;     /* Largura maior em telas pequenas */
+        flex-direction: column;
+        width: 90%;
+        height: auto; /* Garante que no mobile também cresça */
     }
-   
+
     .form-image {
-        display: none;  /* Oculta a imagem em mobile */
+        display: none;
     }
-   
+
     .form {
-        padding: 2rem;  /* Reduz padding em mobile */
+        width: 100%;
+        padding: 2rem;
     }
-   
-    .input-box {
-        flex: 1 1 100%; /* Full width em mobile */
+
+    .form-header h1 {
+        font-size: 1.8rem;
+    }
+
+    /* No celular, os inputs ficam um embaixo do outro (100%) */
+    .input-box, 
+    #campos-medico .input-box {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .gender-group {
+        gap: 1rem;
+        justify-content: space-between;
     }
 }

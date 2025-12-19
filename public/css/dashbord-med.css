@@ -108,7 +108,7 @@ header {
     border-left: 5px solid #567d8d;
 }
 
-/* ======== TABELAS ======== */
+/* ======== TABELAS (ATUALIZADO) ======== */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -116,6 +116,7 @@ table {
     text-align: left;
     border-radius: 10px;
     overflow: hidden;
+    table-layout: auto; /* Distribuição mais inteligente */
 }
 
 thead {
@@ -124,12 +125,22 @@ thead {
 }
 
 th, td {
-    padding: 12px;
+    padding: 14px 15px; /* Aumentei o espaço interno */
     border-bottom: 1px solid #eee;
+    vertical-align: middle; /* Alinha tudo verticalmente ao centro */
 }
 
 tbody tr:nth-child(even) {
     background: #f8f9fa;
+}
+
+/* --- ESTILO ESPECÍFICO PARA A COLUNA DE AÇÕES --- */
+th:last-child, 
+td:last-child {
+    text-align: center; /* Centraliza o conteúdo da coluna */
+    white-space: nowrap; /* Impede que os botões quebrem linha */
+    width: 1%; /* Garante que a coluna ocupe apenas o necessário */
+    min-width: 200px; /* Garante um espaço mínimo visual */
 }
 
 .empty-message {
@@ -144,17 +155,20 @@ td:nth-last-child(2) {
     text-transform: capitalize;
 }
 
-/* ======== BOTÕES DE AÇÃO ======== */
+/* ======== BOTÕES DE AÇÃO (ATUALIZADO) ======== */
 td:last-child button {
-    padding: 6px 12px;
+    padding: 8px 16px; /* Botões maiores e mais fáceis de clicar */
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.85rem;
-    margin-right: 5px;
-    transition: 0.3s;
+    font-weight: 600;
+    margin: 0 5px; /* Espaço lateral entre os botões */
+    transition: 0.3s ease;
+    display: inline-block;
 }
 
+/* Cores dos botões (Exemplos) */
 .btn-editar {
     background: #567d8d;
     color: #fff;
@@ -165,8 +179,16 @@ td:last-child button {
     color: #fff;
 }
 
+/* Se usar botões de status (Realizado/Não) */
+td:last-child button:not([class*="btn-"]) {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
 td:last-child button:hover {
-    opacity: 0.85;
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* ======== GERENCIAR HORÁRIOS ======== */

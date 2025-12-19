@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/dashbord-med.css">
+  <link rel="stylesheet" href="public/css/dashbord-med.css">
   <title>Dashboard Médico - AgendMed</title>
 </head>
 <body>
@@ -35,6 +35,7 @@
       </section>
 
       <section class="cards-container">
+
         <!-- Card de Consultas do Dia -->
         <div class="card">
           <div class="form-header">
@@ -50,9 +51,31 @@
               </tr>
             </thead>
             <tbody id="consultas-hoje">
-              <tr>
-                <td colspan="4" class="empty-message">Nenhuma consulta agendada para hoje</td>
-              </tr>
+              <?php if (!empty($consultas_hoje)) : ?>
+                <?php foreach ($consultas_hoje as $consulta) : ?>
+                  <?php if($consulta['status'] != 'cancelado') : ?>
+                  <tr>
+                    <td><?php echo $consulta['paciente_nome']; ?></td>
+                    <td><?php echo $consulta['hora']; ?></td>
+                    <td>Agendado</td>
+                    <td>
+                      <form method="post" action="marcar_realizado.php" style="display:inline;">
+                        <input type="hidden" name="id" value="<?php echo $consulta['id']; ?>">
+                        <button type="submit" class="edit">Realizado</button>
+                      </form>
+                      <form method="post" action="marcar_nao_realizado.php" style="display:inline;">
+                        <input type="hidden" name="id" value="<?php echo $consulta['id']; ?>">
+                        <button type="submit" class="delete">Não Realizado</button>
+                      </form>
+                    </td>
+                  </tr>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="4" class="empty-message">Nenhuma consulta agendada para hoje</td>
+                </tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
@@ -73,71 +96,36 @@
               </tr>
             </thead>
             <tbody id="consultas-futuras">
-              <tr>
-                <td colspan="5" class="empty-message">Nenhuma consulta futura encontrada</td>
-              </tr>
+              <?php if (!empty($consultas_futuras)) : ?>
+                <?php foreach ($consultas_futuras as $consulta) : ?>
+                  <?php if($consulta['status'] != 'cancelado') : ?>
+                  <tr>
+                    <td><?php echo $consulta['paciente_nome']; ?></td>
+                    <td><?php echo $consulta['data']; ?></td>
+                    <td><?php echo $consulta['hora']; ?></td>
+                    <td>Agendado</td>
+                    <td>
+                      <form method="post" action="marcar_realizado.php" style="display:inline;">
+                        <input type="hidden" name="id" value="<?php echo $consulta['id']; ?>">
+                        <button type="submit" class="edit">Realizado</button>
+                      </form>
+                      <form method="post" action="marcar_nao_realizado.php" style="display:inline;">
+                        <input type="hidden" name="id" value="<?php echo $consulta['id']; ?>">
+                        <button type="submit" class="delete">Não Realizado</button>
+                      </form>
+                    </td>
+                  </tr>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="5" class="empty-message">Nenhuma consulta futura encontrada</td>
+                </tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
 
-        <!-- NOVO CARD: Gerenciamento de Horários Disponíveis -->
-        <div class="card">
-            <div class="form-header">
-                <h2>Gerenciar Horários Disponíveis</h2>
-            </div>
-
-            <!-- Tabela para listar horários existentes -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Dia da Semana</th>
-                        <th>Início</th>
-                        <th>Fim</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="lista-horarios-disponiveis">
-                    <!-- O JavaScript irá preencher esta área -->
-                    <tr>
-                        <td colspan="4" class="empty-message">Carregando horários...</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <hr style="margin: 20px 0; border: 1px solid #eee;">
-
-            <!-- Formulário para adicionar novos horários -->
-            <form id="form-add-horario" class="form-horarios">
-                <div class="form-header">
-                    <h3>Adicionar Novo Horário</h3>
-                </div>
-                <div class="input-group-horarios">
-                    <div class="input-box">
-                        <label for="dia_semana">Dia</label>
-                        <select id="dia_semana" name="dia_semana" required>
-                            <option value="1">Segunda-feira</option>
-                            <option value="2">Terça-feira</option>
-                            <option value="3">Quarta-feira</option>
-                            <option value="4">Quinta-feira</option>
-                            <option value="5">Sexta-feira</option>
-                            <option value="6">Sábado</option>
-                            <option value="0">Domingo</option>
-                        </select>
-                    </div>
-                    <div class="input-box">
-                        <label for="hora_inicio">Hora de Início</label>
-                        <input type="time" id="hora_inicio" name="hora_inicio" required>
-                    </div>
-                    <div class="input-box">
-                        <label for="hora_fim">Hora de Fim</label>
-                        <input type="time" id="hora_fim" name="hora_fim" required>
-                    </div>
-                    <div class="input-box button-box">
-                        <button type="submit" class="action-btn">Adicionar</button>
-                    </div>
-                </div>
-            </form>
-        </div>
       </section>
     </main>
   </div>
