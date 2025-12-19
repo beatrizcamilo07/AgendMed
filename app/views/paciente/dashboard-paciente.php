@@ -1,59 +1,49 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// Proteção do dashboard
 if (!isset($_SESSION['user_tipo']) || $_SESSION['user_tipo'] !== 'paciente') {
     header('Location: index.php?url=login/index');
     exit;
 }
 
-// Nome do paciente vindo da sessão ou controller
 $nomePaciente = $nomePaciente ?? ($_SESSION['user_nome'] ?? 'Paciente');
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <title>Dashboard do Paciente - AgendMed</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="public/css/dashboard-paciente.css">
-    <title>Dashboard do Paciente - AgendMed</title>
 </head>
 <body>
 
 <div class="container">
 
-    <!-- Cabeçalho -->
     <header class="header">
         <div class="logo">
-            <img src="public/assets/img/estetoscópio-agendmed.png" alt="AgendMed">
             <span>AgendMed</span>
         </div>
+
         <nav class="menu">
-            <a href="index.php?url=paciente/dashboard"><img src="public/assets/img/house.png" alt="Início"> Início</a>
-            <a href="#"><img src="public/assets/img/user.png" alt="Perfil"> Perfil</a>
-            <a href="#"><img src="public/assets/img/folder (2).png" alt="Serviços"> Serviços</a>
-            <a href="#"><img src="public/assets/img/about us.png" alt="Sobre nós"> Sobre nós</a>
-            <a href="#"><img src="public/assets/img/help.png" alt="Ajuda"> Ajuda</a>
-            <a href="index.php?url=paciente/logout"><img src="public/assets/img/exit.png" alt="Sair"> Sair</a>
+            <a href="index.php?url=paciente/dashboard-paciente">Início</a>
+            <a href="index.php?url=login/logout">Sair</a>
         </nav>
     </header>
 
-    <!-- Conteúdo principal -->
     <main class="main">
 
-        <!-- Banner -->
         <section class="banner">
-            <div class="greeting-banner">
-                <h2>Olá, <?= htmlspecialchars($nomePaciente) ?>!</h2>
-                <p>Bem-vindo ao AgendMed, onde cuidamos de cada detalhe do seu agendamento.</p>
-            </div>
+            <h2>Olá, <?= htmlspecialchars($nomePaciente) ?></h2>
+            <p>Gerencie suas consultas</p>
         </section>
 
         <section class="cards-container">
 
-            <!-- Consultas Marcadas -->
-            <div class="card consultas-marcadas">
+            <!-- CONSULTAS MARCADAS -->
+            <div class="card">
                 <h2>Consultas Marcadas</h2>
+
                 <table>
                     <thead>
                         <tr>
@@ -62,61 +52,70 @@ $nomePaciente = $nomePaciente ?? ($_SESSION['user_nome'] ?? 'Paciente');
                             <th>Hora</th>
                             <th>Especialidade</th>
                             <th>Status</th>
-                            <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (empty($consultasMarcadas)): ?>
+                    <?php if (empty($consultasMarcadas)): ?>
+                        <tr>
+                            <td colspan="5" style="text-align:center">
+                                Nenhuma consulta agendada
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($consultasMarcadas as $c): ?>
                             <tr>
-                                <td colspan="6" style="text-align:center">Nenhuma consulta agendada.</td>
+                                <td><?= htmlspecialchars($c['nome_medico']) ?></td>
+                                <td><?= date('d/m/Y', strtotime($c['data_consulta'])) ?></td>
+                                <td><?= date('H:i', strtotime($c['hora_consulta'])) ?></td>
+                                <td><?= htmlspecialchars($c['especialidade']) ?></td>
+                                <td><?= ucfirst($c['status_consulta']) ?></td>
                             </tr>
-                        <?php else: ?>
-                            <?php foreach ($consultasMarcadas as $c): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($c['nome_medico']) ?></td>
-                                    <td><?= date('d/m/Y', strtotime($c['data_hora_inicio'])) ?></td>
-                                    <td><?= date('H:i', strtotime($c['data_hora_inicio'])) ?></td>
-                                    <td><?= htmlspecialchars($c['especialidade']) ?></td>
-                                    <td><?= htmlspecialchars($c['status_consulta']) ?></td>
-                                    <td>
-                                        <button onclick="cancelarConsulta(<?= (int)$c['id'] ?>)">Cancelar</button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                     </tbody>
                 </table>
             </div>
 
-            <!-- Agendar Consulta -->
-            <div class="card formAgendamento">
+            <!-- AGENDAR CONSULTA -->
+            <div class="card">
                 <h2>Agendar Consulta</h2>
+
                 <form id="form-agendamento">
+
                     <label>Médico / Especialidade</label>
-                    <select name="id_medico" id="id_medico" required>
+                    <select id="id_medico" required>
                         <option value="">Selecione</option>
                         <?php foreach ($listaMedicos as $m): ?>
                             <option value="<?= (int)$m['id_med'] ?>">
-                                <?= htmlspecialchars($m['especialidade']) ?> - Dr(a). <?= htmlspecialchars($m['nome']) ?>
+                                <?= htmlspecialchars($m['especialidade']) ?> -
+                                Dr(a). <?= htmlspecialchars($m['nome']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
 
                     <label>Data</label>
-                    <input type="date" id="data" name="data" required>
+                    <input
+                        type="date"
+                        id="data"
+                        required
+                        min="<?= date('Y-m-d') ?>"
+                    >
 
-                    <label>Hora</label>
-                    <select name="hora" id="hora" required>
-                        <option value="">Selecione a hora</option>
+                    <label>Horário</label>
+                    <select id="hora" required>
+                        <option value="">Selecione a data primeiro</option>
                     </select>
+
+                    <p id="resumo-horario" style="font-size:0.9rem;color:#555"></p>
 
                     <button type="submit">Agendar</button>
                 </form>
             </div>
 
-            <!-- Histórico -->
-            <div class="card historico">
-                <h2>Histórico de Consultas</h2>
+            <!-- HISTÓRICO -->
+            <div class="card">
+                <h2>Histórico</h2>
+
                 <table>
                     <thead>
                         <tr>
@@ -128,21 +127,23 @@ $nomePaciente = $nomePaciente ?? ($_SESSION['user_nome'] ?? 'Paciente');
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (empty($historicoConsultas)): ?>
+                    <?php if (empty($historicoConsultas)): ?>
+                        <tr>
+                            <td colspan="5" style="text-align:center">
+                                Nenhuma consulta no histórico
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($historicoConsultas as $h): ?>
                             <tr>
-                                <td colspan="5" style="text-align:center">Nenhum histórico encontrado.</td>
+                                <td><?= htmlspecialchars($h['nome_medico']) ?></td>
+                                <td><?= date('d/m/Y', strtotime($h['data_consulta'])) ?></td>
+                                <td><?= date('H:i', strtotime($h['hora_consulta'])) ?></td>
+                                <td><?= htmlspecialchars($h['especialidade']) ?></td>
+                                <td><?= ucfirst($h['status_consulta']) ?></td>
                             </tr>
-                        <?php else: ?>
-                            <?php foreach ($historicoConsultas as $h): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($h['nome_medico']) ?></td>
-                                    <td><?= date('d/m/Y', strtotime($h['data_hora_inicio'])) ?></td>
-                                    <td><?= date('H:i', strtotime($h['data_hora_inicio'])) ?></td>
-                                    <td><?= htmlspecialchars($h['especialidade']) ?></td>
-                                    <td><?= htmlspecialchars($h['status_consulta']) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                     </tbody>
                 </table>
             </div>

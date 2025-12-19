@@ -35,7 +35,7 @@ $nome_medico = $nome_medico ?? ($_SESSION['user_nome'] ?? 'Médico');
         <a href="#"><img src="public/assets/img/folder (2).png" alt="Folder"> Serviços</a>
         <a href="#"><img src="public/assets/img/about us.png" alt="Sobre nós"> Sobre nós</a>
         <a href="ajuda.html"><img src="public/assets/img/help.png" alt="Ajuda"> Ajuda</a>
-        <a href="index.php?url=medico/logout"><img src="public/assets/img/exit.png" alt="Sair"> Sair</a>
+        <a href="index.php?url=logout"><img src="public/assets/img/exit.png" alt="Sair"> Sair</a>
       </nav>
     </header>
 

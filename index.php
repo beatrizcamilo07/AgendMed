@@ -1,34 +1,36 @@
 <?php
-// index.php — Front Controller
-
 session_start();
 
-// Configurações básicas
 require_once __DIR__ . '/app/config/database.php';
-require_once __DIR__ . '/app/models/Usuario.php';
 
-// Roteamento
 $url = $_GET['url'] ?? 'login/index';
-$url = rtrim($url, '/');
+$url = trim($url, '/');
 $urlParts = explode('/', $url);
 
 $controllerSegment = $urlParts[0] ?? 'login';
 $methodName        = $urlParts[1] ?? 'index';
 
-// Controle de sessão
-$usuarioLogado = $_SESSION['user_id']   ?? null;
-$tipoUsuario   = $_SESSION['user_tipo'] ?? null;
-
+// Controllers públicos
 $rotasPublicas = ['login', 'cadastro'];
 
-// Usuário NÃO logado tenta acessar rota privada
-if (!$usuarioLogado && !in_array($controllerSegment, $rotasPublicas, true)) {
+// Logout
+if ($controllerSegment === 'logout') {
+    session_unset();
+    session_destroy();
     header('Location: index.php?url=login/index');
     exit;
 }
 
-// Usuário LOGADO tenta acessar rota pública
-if ($usuarioLogado && in_array($controllerSegment, $rotasPublicas, true)) {
+// Bloqueio de rotas
+$usuarioLogado = $_SESSION['user_id'] ?? null;
+$tipoUsuario = $_SESSION['user_tipo'] ?? null;
+
+if (!$usuarioLogado && !in_array($controllerSegment, $rotasPublicas)) {
+    header('Location: index.php?url=login/index');
+    exit;
+}
+
+if ($usuarioLogado && in_array($controllerSegment, $rotasPublicas)) {
     switch ($tipoUsuario) {
         case 'paciente':
             header('Location: index.php?url=paciente/dashboardPaciente');
@@ -41,44 +43,13 @@ if ($usuarioLogado && in_array($controllerSegment, $rotasPublicas, true)) {
             break;
         default:
             session_destroy();
-            header('Location: index.php?url=login/index&erro=Tipo de usuário inválido');
+            header('Location: index.php?url=login/index');
             break;
     }
     exit;
 }
 
-// ----------------- LOGOUT -----------------
-if ($controllerSegment === 'logout') {
-    if (!$usuarioLogado) {
-        header('Location: index.php?url=login/index');
-        exit;
-    }
-
-    switch ($tipoUsuario) {
-        case 'paciente':
-            require_once __DIR__ . '/app/controllers/PacienteController.php';
-            $controller = new PacienteController();
-            $controller->logout();
-            break;
-        case 'medico':
-            require_once __DIR__ . '/app/controllers/MedicoController.php';
-            $controller = new MedicoController();
-            $controller->logout();
-            break;
-        case 'administrador':
-            require_once __DIR__ . '/app/controllers/AdministradorController.php';
-            $controller = new AdministradorController();
-            $controller->logout();
-            break;
-        default:
-            session_destroy();
-            header('Location: index.php?url=login/index&erro=Tipo de usuário inválido');
-            break;
-    }
-    exit;
-}
-
-// Resolução do Controller
+// Monta controller
 $controllerName = ucfirst($controllerSegment) . 'Controller';
 $controllerFile = __DIR__ . "/app/controllers/{$controllerName}.php";
 
@@ -96,12 +67,14 @@ if (!class_exists($controllerName)) {
     exit;
 }
 
-// Execução do método
 $database = new Database();
 $db = $database->getConnection();
 
-// Passa $db só se o controller aceitar no construtor
-$controller = new $controllerName($db ?? null);
+try {
+    $controller = new $controllerName($db);
+} catch (ArgumentCountError $e) {
+    $controller = new $controllerName();
+}
 
 if (!method_exists($controller, $methodName)) {
     http_response_code(404);
@@ -109,6 +82,7 @@ if (!method_exists($controller, $methodName)) {
     exit;
 }
 
-// Passa parâmetros adicionais na URL se existirem
+// Parâmetros extras da URL
 $params = array_slice($urlParts, 2);
 call_user_func_array([$controller, $methodName], $params);
+?>

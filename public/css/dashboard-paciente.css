@@ -219,3 +219,6 @@ td:last-child button:hover {
         grid-column: 1;
     }
 }
+ .status-agendada { color: green; font-weight: bold; }
+        .status-cancelada { color: red; font-weight: bold; }
+        .status-finalizada { color: blue; font-weight: bold; }

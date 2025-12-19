@@ -1,86 +1,93 @@
 <?php
-// Carrega os models manualmente (porque PHP não adivinha nada)
 require_once __DIR__ . '/../models/Consulta.php';
 require_once __DIR__ . '/../models/Medico.php';
 
-class PacienteController
-{
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+class PacienteController {
+
+    private PDO $db;
     private ConsultaModel $consultaModel;
     private MedicoModel $medicoModel;
 
-    public function __construct(PDO $db)
-    {
-        $this->consultaModel = new ConsultaModel($db);
-        $this->medicoModel   = new MedicoModel($db);
+    public function __construct(PDO $db) {
+        $this->db = $db;
+        $this->consultaModel = new ConsultaModel($this->db);
+        $this->medicoModel   = new MedicoModel($this->db);
     }
 
-    public function dashboardPaciente()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+    // Dashboard do paciente
+    public function dashboardPaciente() {
 
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
+        if (
+            !isset($_SESSION['user_id'], $_SESSION['user_tipo']) ||
+            $_SESSION['user_tipo'] !== 'paciente'
+        ) {
+            header('Location: index.php?url=login/index');
             exit;
         }
 
         $idPaciente   = $_SESSION['user_id'];
-        $nomePaciente = $_SESSION['user_nome'] ?? '';
+        $nomePaciente = $_SESSION['user_nome'];
 
-        $consultasMarcadas  = $this->consultaModel->getConsultasPorPaciente($idPaciente, 'futuras');
-        $historicoConsultas = $this->consultaModel->getConsultasPorPaciente($idPaciente, 'passadas');
-        $listaMedicos       = $this->medicoModel->listarMedicosComEspecialidade();
+        // Consultas do paciente
+        $consultasMarcadas  = $this->consultaModel->getConsultasPorPaciente($idPaciente);
+        $historicoConsultas = []; // pode separar por status depois
+
+        // Lista de médicos
+        $listaMedicos = $this->medicoModel->listarMedicosComEspecialidade();
 
         require __DIR__ . '/../views/paciente/dashboard-paciente.php';
     }
 
-    public function horariosDisponiveis()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+    // Retorna horários disponíveis de um médico (JSON)
+    public function horariosPorMedico() {
 
-        header('Content-Type: application/json');
+        $idMedico = $_GET['id_medico'] ?? null;
+        $data     = $_GET['data'] ?? null;
 
-        $idMed = $_GET['id_med'] ?? null;
-        $data  = $_GET['data'] ?? null;
-
-        if (!$idMed || !$data) {
+        if (!$idMedico || !$data) {
             echo json_encode([]);
-            exit;
+            return;
         }
 
-        $horarios = $this->consultaModel->getHorariosDisponiveisPorMedico($idMed, $data);
+        $horarios = $this->consultaModel
+            ->getHorariosDisponiveisPorMedico((int)$idMedico, $data);
+
         echo json_encode($horarios);
-        exit;
     }
 
-    public function agendar()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+    // Agendar consulta via POST
+    public function agendar() {
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $idPaciente = $_SESSION['user_id'];
+            $idHorario  = $_POST['id_horario'] ?? null;
+
+            if (!$idHorario) {
+                echo json_encode(['sucesso' => false, 'erro' => 'Horário inválido']);
+                return;
+            }
+
+            $resultado = $this->consultaModel
+                ->criarAgendamentoPorHorario($idPaciente, (int)$idHorario);
+
+            echo json_encode($resultado);
+        }
+    }
+
+    // Cancelar consulta
+    public function cancelar() {
+
+        $idConsulta = $_GET['id'] ?? null;
+
+        if (!$idConsulta) {
+            echo json_encode(['sucesso' => false, 'erro' => 'ID inválido']);
+            return;
         }
 
-        header('Content-Type: application/json');
-
-        $dados = json_decode(file_get_contents('php://input'), true);
-        $idHorario = $dados['id_horario'] ?? null;
-
-        if (!$idHorario) {
-            echo json_encode([
-                'sucesso' => false,
-                'erro' => 'Horário inválido'
-            ]);
-            exit;
-        }
-
-        $resultado = $this->consultaModel->criarAgendamentoPorHorario(
-            $_SESSION['user_id'],
-            $idHorario
-        );
-
-        echo json_encode($resultado);
-        exit;
+        $this->consultaModel->cancelarConsulta((int)$idConsulta);
+        echo json_encode(['sucesso' => true]);
     }
 }

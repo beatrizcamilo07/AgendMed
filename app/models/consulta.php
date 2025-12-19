@@ -3,89 +3,79 @@ class ConsultaModel
 {
     private PDO $conn;
 
-    const STATUS_CONSULTA_AGENDADA = 'agendada';
-    const STATUS_CONSULTA_CANCELADA = 'cancelada';
-    const STATUS_ATENDIMENTO_NAO_REALIZADO = 'nao_realizado';
-    const STATUS_ATENDIMENTO_REALIZADO = 'realizado';
+    const STATUS_AGENDADA  = 'agendada';
+    const STATUS_FINALIZADA = 'finalizada';
+    const STATUS_CANCELADA  = 'cancelada';
 
     public function __construct(PDO $db)
     {
         $this->conn = $db;
     }
 
-    // =========================
+    // ============================
     // CONSULTAS DO PACIENTE
-    // =========================
-    public function getConsultasPorPaciente($idPaciente, $tipo = 'futuras')
+    // ============================
+    public function getConsultasPorPaciente($idPaciente)
     {
-        $operador = ($tipo === 'futuras') ? '>=' : '<';
-        $ordem    = ($tipo === 'futuras') ? 'ASC' : 'DESC';
-
         $sql = "
-            SELECT 
+            SELECT
                 c.id,
-                c.status_consulta,
-                h.data_hora_inicio,
                 u.nome AS nome_medico,
-                e.nome AS especialidade
+                e.nome AS especialidade,
+                h.data AS data_consulta,
+                h.hora AS hora_consulta,
+                c.status_consulta
             FROM consultas c
-            JOIN horario h ON c.id_horario = h.id_horario
-            JOIN medico m ON h.id_med = m.id_med
-            JOIN usuario u ON m.id_user = u.id_user
-            JOIN especialidades e ON m.id_especialidade = e.id
-            WHERE c.id_paciente = :paciente
-              AND h.data_hora_inicio {$operador} NOW()
-            ORDER BY h.data_hora_inicio {$ordem}
+            JOIN horario h ON h.id_horario = c.id_horario
+            JOIN medico m ON m.id_med = h.id_med
+            JOIN usuario u ON u.id_user = m.id_user
+            JOIN especialidades e ON e.id = m.id_especialidade
+            WHERE c.id_paciente = :idPaciente
+            ORDER BY h.data ASC, h.hora ASC
         ";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':paciente' => $idPaciente]);
+        $stmt->bindValue(':idPaciente', $idPaciente, PDO::PARAM_INT);
+        $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $consultas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // aplica regra das 24h
+        foreach ($consultas as &$c) {
+            $c['pode_cancelar'] = $this->podeCancelar(
+                $c['data_consulta'],
+                $c['hora_consulta']
+            );
+        }
+
+        return $consultas;
     }
 
-    // =========================
-    // CONSULTAS DO MÉDICO
-    // =========================
-    public function getConsultasPorMedico($idMedico, $tipo = 'futuras')
+    // ============================
+    // REGRA DAS 24H
+    // ============================
+    private function podeCancelar($data, $hora): bool
     {
-        $operador = ($tipo === 'futuras') ? '>=' : '<';
-        $ordem    = ($tipo === 'futuras') ? 'ASC' : 'DESC';
+        $dataConsulta = new DateTime($data . ' ' . $hora);
+        $agora = new DateTime();
 
-        $sql = "
-            SELECT 
-                c.id,
-                c.status_consulta,
-                h.data_hora_inicio,
-                u.nome AS nome_paciente
-            FROM consultas c
-            JOIN horario h ON c.id_horario = h.id_horario
-            JOIN usuario u ON c.id_paciente = u.id_user
-            WHERE h.id_med = :medico
-              AND h.data_hora_inicio {$operador} NOW()
-            ORDER BY h.data_hora_inicio {$ordem}
-        ";
+        $diffHoras = ($dataConsulta->getTimestamp() - $agora->getTimestamp()) / 3600;
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':medico' => $idMedico]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $diffHoras >= 24;
     }
 
-    // =========================
+    // ============================
     // HORÁRIOS DISPONÍVEIS
-    // =========================
+    // ============================
     public function getHorariosDisponiveisPorMedico($idMedico, $data)
     {
         $sql = "
-            SELECT 
-                id_horario,
-                TIME(data_hora_inicio) AS hora
+            SELECT id_horario, data, hora
             FROM horario
             WHERE id_med = :medico
-              AND DATE(data_hora_inicio) = :data
+              AND data = :data
               AND status = 'disponivel'
-            ORDER BY data_hora_inicio ASC
+            ORDER BY hora ASC
         ";
 
         $stmt = $this->conn->prepare($sql);
@@ -97,47 +87,39 @@ class ConsultaModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // =========================
-    // AGENDAR CONSULTA
-    // =========================
+    // ============================
+    // CRIAR AGENDAMENTO
+    // ============================
     public function criarAgendamentoPorHorario($idPaciente, $idHorario)
     {
         try {
             $this->conn->beginTransaction();
 
-            $sqlCheck = "
-                SELECT id_horario
-                FROM horario
-                WHERE id_horario = :horario
-                  AND status = 'disponivel'
-                FOR UPDATE
-            ";
-            $stmt = $this->conn->prepare($sqlCheck);
-            $stmt->execute([':horario' => $idHorario]);
+            $check = $this->conn->prepare(
+                "SELECT id_horario FROM horario 
+                 WHERE id_horario = :id AND status = 'disponivel' FOR UPDATE"
+            );
+            $check->execute([':id' => $idHorario]);
 
-            if (!$stmt->fetch()) {
+            if (!$check->fetch()) {
                 $this->conn->rollBack();
                 return ['sucesso' => false, 'erro' => 'Horário indisponível'];
             }
 
-            $sqlInsert = "
-                INSERT INTO consultas (id_paciente, id_horario, status_consulta)
-                VALUES (:paciente, :horario, :status)
-            ";
-            $stmt = $this->conn->prepare($sqlInsert);
-            $stmt->execute([
+            $insert = $this->conn->prepare(
+                "INSERT INTO consultas (id_paciente, id_horario, status_consulta)
+                 VALUES (:paciente, :horario, :status)"
+            );
+            $insert->execute([
                 ':paciente' => $idPaciente,
                 ':horario'  => $idHorario,
-                ':status'   => self::STATUS_CONSULTA_AGENDADA
+                ':status'   => self::STATUS_AGENDADA
             ]);
 
-            $sqlUpdate = "
-                UPDATE horario
-                SET status = 'indisponivel'
-                WHERE id_horario = :horario
-            ";
-            $stmt = $this->conn->prepare($sqlUpdate);
-            $stmt->execute([':horario' => $idHorario]);
+            $update = $this->conn->prepare(
+                "UPDATE horario SET status = 'indisponivel' WHERE id_horario = :id"
+            );
+            $update->execute([':id' => $idHorario]);
 
             $this->conn->commit();
             return ['sucesso' => true];
@@ -148,24 +130,29 @@ class ConsultaModel
         }
     }
 
-    // =========================
-    // ATUALIZAR STATUS DE ATENDIMENTO
-    // =========================
-    public function atualizarStatusAtendimento($idConsulta, $status)
+    // ============================
+    // CANCELAR CONSULTA
+    // ============================
+    public function cancelarConsulta($idConsulta)
     {
-        $sql = "
-            UPDATE consultas
-            SET status_consulta = :status
-            WHERE id = :idConsulta
-        ";
+        $this->conn->beginTransaction();
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-            ':status'     => $status,
-            ':idConsulta' => $idConsulta
+        $this->conn->prepare(
+            "UPDATE consultas 
+             SET status_consulta = :status 
+             WHERE id = :id"
+        )->execute([
+            ':status' => self::STATUS_CANCELADA,
+            ':id'     => $idConsulta
         ]);
 
-        return $stmt->rowCount() > 0;
+        $this->conn->prepare(
+            "UPDATE horario h
+             JOIN consultas c ON c.id_horario = h.id_horario
+             SET h.status = 'disponivel'
+             WHERE c.id = :id"
+        )->execute([':id' => $idConsulta]);
+
+        $this->conn->commit();
     }
 }
-?>

@@ -5,17 +5,27 @@ const horaEl   = document.getElementById('hora');
 async function buscarHorarios() {
     if (!medicoEl.value || !dataEl.value) return;
 
-    const resp = await fetch(
-        `index.php?url=paciente/horariosDisponiveis&id_med=${medicoEl.value}&data=${dataEl.value}`
-    );
+    const url = `index.php?url=paciente/horariosPorMedico&id_medico=${medicoEl.value}&data=${dataEl.value}`;
+
+    console.log('Buscando:', url);
+
+    const resp = await fetch(url);
     const horarios = await resp.json();
 
-    horaEl.innerHTML = '<option value="">Selecione</option>';
+    horaEl.innerHTML = '<option value="">Selecione a hora</option>';
+
+    if (horarios.length === 0) {
+        const opt = document.createElement('option');
+        opt.textContent = 'Nenhum horário disponível';
+        opt.disabled = true;
+        horaEl.appendChild(opt);
+        return;
+    }
 
     horarios.forEach(h => {
         const opt = document.createElement('option');
         opt.value = h.id_horario;
-        opt.textContent = h.hora;
+        opt.textContent = h.hora.substring(0, 5);
         horaEl.appendChild(opt);
     });
 }
@@ -23,7 +33,9 @@ async function buscarHorarios() {
 medicoEl.addEventListener('change', buscarHorarios);
 dataEl.addEventListener('change', buscarHorarios);
 
-document.getElementById('form-agendamento').addEventListener('submit', async e => {
+document
+  .getElementById('form-agendamento')
+  .addEventListener('submit', async e => {
     e.preventDefault();
 
     if (!horaEl.value) {
@@ -31,10 +43,12 @@ document.getElementById('form-agendamento').addEventListener('submit', async e =
         return;
     }
 
+    const formData = new FormData();
+    formData.append('id_horario', horaEl.value);
+
     const resp = await fetch('index.php?url=paciente/agendar', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ id_horario: horaEl.value })
+        body: formData
     });
 
     const res = await resp.json();
